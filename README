@@ -76,4 +76,11 @@ npm run lint
 Compile optimized visual static assets directly to `/dist`:
 ```bash
 npm run build
+
+An Editorial Showcase of Mindful Digital Architecture
+Your website is designed as an interactive, high-fashion developer portfolio and creative playground that prioritizes human-centered readability and elegant visual execution. Moving past traditional layout patterns, the application adopts a timeless Swiss design aesthetic, relying on clean "Space Grotesk" headings and monospace details to structure information clearly. It features a fully responsive design tailored with a dual-system light and dark theme, ensuring high-contrast visibility and a tailored eye-safe reading experience for both casual and technical audiences.
+Fluid, Non-Blocking Interactions
+Interaction is at the center of the portfolio's architecture, matching physical feedback loops with fast client-side performance. Visual elements are connected to custom micro-animations, complete with real-time mouse-trailing cursor indicators, context-specific custom SVG browser favicons, and gentle spatial hover audio tones. A low-overhead React Intersection Observer framework automatically staggers sections and project cards into the viewport as users scroll, giving the impression of a physical printed editorial magazine fluidly translating onto the digital screen.
+Insight into Ambitious, Hardened Core Ventures
+The application serves as a gateway to your primary software builds, detailing the engineering models behind Stavex OS and Kairo AI. Users can explore complete specifications directly inside immersive fullscreen technical spec sheets, highlighting features like peer-review logic networks, physiological chronobiology planners, and secure OAuth synchronization pipelines. The site also highlights your focus on hardware robotics, trajectory physics, and cybersecurity auditing, exhibiting a mature dedication to low-level register firmware and defensive OWASP hardening practices.
 ```
