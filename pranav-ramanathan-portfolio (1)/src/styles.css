@@ -11,6 +11,7 @@
 }
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; scroll-padding-top: 90px; }
+html, body { overflow-x: clip; }
 body { margin: 0; background: var(--cream); color: var(--ink); font: 17px/1.6 var(--sans); -webkit-font-smoothing: antialiased; }
 img { max-width: 100%; display: block; }
 a { color: inherit; }
@@ -33,8 +34,9 @@ em { font-style: italic; }
 
 .hero { position: relative; width: min(var(--wrap), calc(100% - 40px)); margin: 0 auto; padding: clamp(70px, 14vh, 150px) 0 clamp(60px, 10vh, 110px); isolation: isolate; }
 .hero h1 { font-size: clamp(54px, 9.4vw, 132px); max-width: 11ch; }
-.hero h1 em { background: linear-gradient(transparent 62%, var(--butter) 62% 92%, transparent 92%); padding: 0 .04em; }
-.hero h1 em:first-of-type { background-image: linear-gradient(transparent 62%, var(--mint) 62% 92%, transparent 92%); }
+.hero h1 em { --hl: var(--butter); background: linear-gradient(transparent 66%, var(--hl) 66% 94%, transparent 94%); padding: 0 .04em; }
+.hero h1 em:first-of-type { --hl: var(--mint); }
+@media (prefers-color-scheme: dark) { .hero h1 em { background-image: linear-gradient(transparent 66%, color-mix(in srgb, var(--hl) 38%, transparent) 66% 94%, transparent 94%); } }
 .lede { font-size: clamp(18px, 2vw, 22px); line-height: 1.55; max-width: 38em; color: var(--muted); margin: 30px 0 0; }
 .cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 36px; }
 .btn { text-decoration: none; font-weight: 500; font-size: 15px; padding: 14px 24px; border-radius: 99px; background: var(--ink); color: var(--cream); transition: transform .2s, background .2s; }
