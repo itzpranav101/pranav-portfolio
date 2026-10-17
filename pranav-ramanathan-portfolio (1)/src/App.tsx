@@ -107,49 +107,36 @@ export default function App() {
     <>
       <a className="skip" href="#work">Skip to work</a>
       <header className="nav">
-        <a className="brand" href="#top">Pranav<span>.</span></a>
+        <a className="brand" href="#top">Pranav Ramanathan</a>
         <nav aria-label="Primary">
           <a href="#work">Work</a>
-          <a href="#how">How I work</a>
-          <a href="#path">Path</a>
-          <a href="#contact" className="pill">Say hello</a>
+          <a href="#contact">Contact</a>
         </nav>
       </header>
 
       <main id="top">
         <section className="hero">
-          <div className="blobs" aria-hidden="true"><i /><i /><i /><i /></div>
-          <p className="eyebrow">Student · Singapore{time && <> · {time} local</>}</p>
-          <h1>
-            I build <em>robots</em>, and software that <em>helps people.</em>
-          </h1>
+          <h1>I&rsquo;m a student in Singapore building robots and software that helps people.</h1>
           <p className="lede">
-            I&rsquo;m Pranav. Right now I&rsquo;m working on an app for people living with dementia, a plant-care app that runs its checks on your phone, and a sensor that goes in the soil.
+            Right now: an app for people living with dementia, a plant-care app that runs its checks on your phone, and a sensor that goes in the soil.
           </p>
-          <div className="cta">
-            <a className="btn" href="#work">See the work</a>
-            <a className="btn ghost" href="#contact">Get in touch</a>
-          </div>
+          <p className="meta">Singapore{time && <> &middot; {time}</>}</p>
         </section>
 
         <section id="work" className="section">
-          <div className="head">
-            <p className="eyebrow">Selected work</p>
-            <h2>Four things I&rsquo;m proud of</h2>
-          </div>
+          <h2 className="label">Work</h2>
           {projects.map((p, i) => (
-            <article key={p.id} className={`project ${i % 2 ? 'flip' : ''}`} id={p.id}>
-              <figure className={`media tone-${p.tone} ${p.media.kind}`}>
+            <article key={p.id} className="project" id={p.id}>
+              <figure className={`media ${p.media.kind}`}>
                 <img src={p.media.src} alt={p.media.alt} loading="lazy" />
                 {p.media.caption && <figcaption>{p.media.caption}</figcaption>}
               </figure>
-              <div className="copy reveal">
-                <p className="num">0{i + 1}</p>
-                <p className="kicker">{p.kicker}</p>
+              <div className="copy">
                 <h3>{p.title}</h3>
+                <p className="kicker">{p.kicker}</p>
                 <p>{p.body}</p>
                 <p className="muted">{p.detail}</p>
-                <ul className="chips">{p.stack.map((s) => <li key={s}>{s}</li>)}</ul>
+                <p className="stack">{p.stack.join(' · ')}</p>
                 {p.links.length > 0 && (
                   <p className="links">
                     {p.links.map((l) => <a key={l.href} href={l.href} target="_blank" rel="noreferrer">{l.label} <span aria-hidden="true">↗</span></a>)}
@@ -161,16 +148,13 @@ export default function App() {
         </section>
 
         <section className="section">
-          <div className="head">
-            <p className="eyebrow">Also</p>
-            <h2>Other things I&rsquo;ve built</h2>
-          </div>
-          <ul className="also">
+          <h2 className="label">Also built</h2>
+          <ul className="list">
             {also.map((a) => (
-              <li key={a.name} className={`tone-${a.tone} reveal`}>
+              <li key={a.name}>
                 <a href={a.href} target="_blank" rel="noreferrer">
-                  <h3>{a.name} <span aria-hidden="true">↗</span></h3>
-                  <p>{a.text}</p>
+                  <b>{a.name} <span aria-hidden="true">↗</span></b>
+                  <span>{a.text}</span>
                 </a>
               </li>
             ))}
@@ -178,44 +162,33 @@ export default function App() {
         </section>
 
         <section id="how" className="section">
-          <div className="head">
-            <p className="eyebrow">How I work</p>
-            <h2>Three rules I keep</h2>
-          </div>
-          <ol className="rules">
+          <h2 className="label">How I work</h2>
+          <ul className="rules">
             {principles.map((p) => (
-              <li key={p.n} className="reveal">
-                <span>{p.n}</span>
-                <div><h3>{p.t}</h3><p>{p.d}</p></div>
-              </li>
+              <li key={p.n}><b>{p.t}.</b> {p.d}</li>
             ))}
-          </ol>
+          </ul>
         </section>
 
         <section id="path" className="section">
-          <div className="head">
-            <p className="eyebrow">Path</p>
-            <h2>From first website to first sensor</h2>
-          </div>
+          <h2 className="label">Timeline</h2>
           <ol className="timeline">
             {timeline.map(([d, t, s]) => (
-              <li key={d} className="reveal"><time>{d}</time><b>{t}</b><span>{s}</span></li>
+              <li key={d}><time>{d}</time><span><b>{t}</b>, {s.toLowerCase()}</span></li>
             ))}
           </ol>
-          <p className="outside">Away from the screen: violin, badminton and golf.</p>
+          <p className="muted small">Away from the screen: violin, badminton and golf.</p>
         </section>
 
-        <section id="contact" className="section contact">
-          <p className="eyebrow">Contact</p>
-          <h2>Say hello.</h2>
-          <p className="lede">If you work on dementia care, urban farming, robotics or student startups, or you just want to compare notes, write to me.</p>
+        <section id="contact" className="section">
+          <h2 className="label">Contact</h2>
+          <p className="lede-sm">If you work on dementia care, urban farming, robotics or student startups, or want to compare notes, write to me.</p>
           <p className="mail"><a href="mailto:pranav@stavex.org">pranav@stavex.org</a></p>
           <ul className="social">
             <li><a href="https://github.com/itzpranav101" target="_blank" rel="noreferrer">GitHub</a></li>
             <li><a href="https://instagram.com/prx_50" target="_blank" rel="noreferrer">Instagram</a></li>
             <li><a href="https://stavex.org" target="_blank" rel="noreferrer">Stavex</a></li>
           </ul>
-          <img className="rube" src={`${B}img/rube.svg`} alt="An animated chain-reaction machine: a claw drops a ball that sets off a seesaw, a pulley and dominoes, and finally lights a bulb" loading="lazy" />
         </section>
       </main>
 
