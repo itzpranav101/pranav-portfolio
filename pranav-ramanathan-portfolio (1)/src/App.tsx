@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react';
+import {useEffect, useRef, useState} from 'react';
 
 const B = import.meta.env.BASE_URL;
 
@@ -101,38 +101,117 @@ function useSingaporeTime() {
   return t;
 }
 
+const VERT = 'attribute vec2 p;void main(){gl_Position=vec4(p,0.,1.);}';
+const FRAG = `
+#ifdef GL_FRAGMENT_PRECISION_HIGH
+precision highp float;
+#else
+precision mediump float;
+#endif
+uniform vec2 r; uniform float t;
+float h(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
+float n(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);
+  return mix(mix(h(i),h(i+vec2(1,0)),f.x),mix(h(i+vec2(0,1)),h(i+vec2(1,1)),f.x),f.y);}
+float fbm(vec2 p){float v=0.,a=.5;for(int i=0;i<4;i++){v+=a*n(p);p=p*2.03+vec2(1.7,9.2);a*=.5;}return v;}
+void main(){
+  vec2 uv=gl_FragCoord.xy/r; vec2 p=(gl_FragCoord.xy-.5*r)/min(r.x,r.y)*1.6;
+  vec2 q=vec2(fbm(p+vec2(0.,t*.05)),fbm(p+vec2(5.2,1.3)-t*.04));
+  float f=fbm(p+2.4*q+vec2(t*.03,0.));
+  vec3 deep=vec3(.027,.07,.05), moss=vec3(.08,.40,.26), teal=vec3(.14,.66,.52), gold=vec3(1.,.74,.26);
+  vec3 c=mix(deep,moss,smoothstep(.15,.7,f));
+  c=mix(c,teal,smoothstep(.25,.85,q.x)*.7);
+  c=mix(c,gold,smoothstep(.42,.80,f*(.55+.9*uv.y)));
+  c*=mix(.22,1.,smoothstep(.0,.8,uv.y));
+  gl_FragColor=vec4(c,1.);
+}`;
+
+function Gradient() {
+  const ref = useRef<HTMLCanvasElement>(null);
+  useEffect(() => {
+    const cv = ref.current;
+    if (!cv) return;
+    const gl = cv.getContext('webgl', {antialias: false, alpha: false, powerPreference: 'low-power'});
+    if (!gl) return;
+    const mk = (type: number, src: string) => { const s = gl.createShader(type)!; gl.shaderSource(s, src); gl.compileShader(s); return s; };
+    const pr = gl.createProgram()!;
+    gl.attachShader(pr, mk(gl.VERTEX_SHADER, VERT));
+    gl.attachShader(pr, mk(gl.FRAGMENT_SHADER, FRAG));
+    gl.linkProgram(pr);
+    if (!gl.getProgramParameter(pr, gl.LINK_STATUS)) return;
+    gl.useProgram(pr);
+    const buf = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+    const loc = gl.getAttribLocation(pr, 'p');
+    gl.enableVertexAttribArray(loc);
+    gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+    const uR = gl.getUniformLocation(pr, 'r'), uT = gl.getUniformLocation(pr, 't');
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let raf = 0, visible = true, start = performance.now();
+    const size = () => {
+      const d = Math.min(devicePixelRatio || 1, 1.25) * 0.6;
+      cv.width = Math.max(2, Math.floor(cv.clientWidth * d));
+      cv.height = Math.max(2, Math.floor(cv.clientHeight * d));
+      gl.viewport(0, 0, cv.width, cv.height);
+    };
+    const draw = () => {
+      gl.uniform2f(uR, cv.width, cv.height);
+      gl.uniform1f(uT, reduce ? 12 : (performance.now() - start) / 1000 + 12);
+      gl.drawArrays(gl.TRIANGLES, 0, 3);
+    };
+    const loop = () => { draw(); raf = visible && !document.hidden ? requestAnimationFrame(loop) : 0; };
+    const kick = () => { if (!reduce && !raf && visible && !document.hidden) raf = requestAnimationFrame(loop); };
+    size(); draw(); kick();
+    const ro = new ResizeObserver(() => { size(); draw(); });
+    ro.observe(cv);
+    const io = new IntersectionObserver(([e]) => { visible = e.isIntersecting; kick(); });
+    io.observe(cv);
+    document.addEventListener('visibilitychange', kick);
+    return () => { cancelAnimationFrame(raf); ro.disconnect(); io.disconnect(); document.removeEventListener('visibilitychange', kick); };
+  }, []);
+  return <canvas ref={ref} className="gl" aria-hidden="true" />;
+}
+
 export default function App() {
   const time = useSingaporeTime();
   return (
     <>
       <a className="skip" href="#work">Skip to work</a>
-      <header className="nav">
-        <a className="brand" href="#top">Pranav Ramanathan</a>
-        <nav aria-label="Primary">
-          <a href="#work">Work</a>
-          <a href="#contact">Contact</a>
+      <header className="hero" id="top">
+        <Gradient />
+        <p className="blurb">Student building robots, <em>and software that helps people,</em> through care, detail and restraint.</p>
+        <h1 className="name"><span>Pranav</span> <em>Ramanathan.</em></h1>
+        <nav className="bar" aria-label="Primary">
+          <span className="ver">Singapore{time && <> &middot; {time}</>}</span>
+          <ul className="out">
+            <li><a href="https://github.com/itzpranav101" target="_blank" rel="noreferrer">GitHub</a></li>
+            <li><a href="https://instagram.com/prx_50" target="_blank" rel="noreferrer">Instagram</a></li>
+            <li><a href="https://stavex.org" target="_blank" rel="noreferrer">Stavex</a></li>
+          </ul>
+          <ul className="in">
+            <li><a href="#work">Work</a></li>
+            <li><a href="#info">Info</a></li>
+            <li><a href="#contact">Contact</a></li>
+          </ul>
         </nav>
       </header>
 
-      <main id="top">
-        <section className="hero">
-          <h1>I&rsquo;m a student in Singapore building robots and software that helps people.</h1>
-          <p className="lede">
-            Right now: an app for people living with dementia, a plant-care app that runs its checks on your phone, and a sensor that goes in the soil.
-          </p>
-          <p className="meta">Singapore{time && <> &middot; {time}</>}</p>
+      <main>
+        <section id="info" className="sec">
+          <p className="idx">Info</p>
+          <p className="big">I&rsquo;m Pranav, a student in Singapore. I build robots, and software that helps people. Right now: an app for people living with dementia, a plant-care app that checks plants on your phone, and a sensor that goes in the soil.</p>
+          <ul className="rules">
+            {principles.map((p) => <li key={p.n}><b>{p.t}.</b> {p.d}</li>)}
+          </ul>
         </section>
 
-        <section id="work" className="section">
-          <h2 className="label">Work</h2>
+        <section id="work" className="sec">
+          <p className="idx">Work</p>
           {projects.map((p, i) => (
-            <article key={p.id} className="project" id={p.id}>
-              <figure className={`media ${p.media.kind}`}>
-                <img src={p.media.src} alt={p.media.alt} loading="lazy" />
-                {p.media.caption && <figcaption>{p.media.caption}</figcaption>}
-              </figure>
-              <div className="copy">
-                <h3>{p.title}</h3>
+            <article key={p.id} className="proj" id={p.id}>
+              <div className="pt">
+                <span className="n">0{i + 1}</span>
+                <h2>{p.title}</h2>
                 <p className="kicker">{p.kicker}</p>
                 <p>{p.body}</p>
                 <p className="muted">{p.detail}</p>
@@ -143,56 +222,39 @@ export default function App() {
                   </p>
                 )}
               </div>
+              <figure className={`shot ${p.media.kind}`}>
+                <img src={p.media.src} alt={p.media.alt} loading="lazy" />
+                {p.media.caption && <figcaption>{p.media.caption}</figcaption>}
+              </figure>
             </article>
           ))}
         </section>
 
-        <section className="section">
-          <h2 className="label">Also built</h2>
-          <ul className="list">
+        <section className="sec">
+          <p className="idx">Also built</p>
+          <ul className="rows">
             {also.map((a) => (
-              <li key={a.name}>
-                <a href={a.href} target="_blank" rel="noreferrer">
-                  <b>{a.name} <span aria-hidden="true">↗</span></b>
-                  <span>{a.text}</span>
-                </a>
-              </li>
+              <li key={a.name}><a href={a.href} target="_blank" rel="noreferrer"><b>{a.name} <span aria-hidden="true">↗</span></b><span>{a.text}</span></a></li>
             ))}
           </ul>
         </section>
 
-        <section id="how" className="section">
-          <h2 className="label">How I work</h2>
-          <ul className="rules">
-            {principles.map((p) => (
-              <li key={p.n}><b>{p.t}.</b> {p.d}</li>
-            ))}
-          </ul>
-        </section>
-
-        <section id="path" className="section">
-          <h2 className="label">Timeline</h2>
+        <section className="sec">
+          <p className="idx">Timeline</p>
           <ol className="timeline">
-            {timeline.map(([d, t, s]) => (
-              <li key={d}><time>{d}</time><span><b>{t}</b>, {s.toLowerCase()}</span></li>
-            ))}
+            {timeline.map(([d, t, sub]) => <li key={d}><time>{d}</time><span><b>{t}</b>, {sub.toLowerCase()}</span></li>)}
           </ol>
-          <p className="muted small">Away from the screen: violin, badminton and golf.</p>
+          <p className="muted">Away from the screen: violin, badminton and golf.</p>
         </section>
 
-        <section id="contact" className="section">
-          <h2 className="label">Contact</h2>
-          <p className="lede-sm">If you work on dementia care, urban farming, robotics or student startups, or want to compare notes, write to me.</p>
-          <p className="mail"><a href="mailto:pranav@stavex.org">pranav@stavex.org</a></p>
-          <ul className="social">
-            <li><a href="https://github.com/itzpranav101" target="_blank" rel="noreferrer">GitHub</a></li>
-            <li><a href="https://instagram.com/prx_50" target="_blank" rel="noreferrer">Instagram</a></li>
-            <li><a href="https://stavex.org" target="_blank" rel="noreferrer">Stavex</a></li>
-          </ul>
+        <section id="contact" className="sec contact">
+          <p className="idx">Contact</p>
+          <p className="big">Work on dementia care, urban farming, robotics or student startups? Write to me.</p>
+          <a className="mail" href="mailto:pranav@stavex.org">pranav@stavex.org</a>
         </section>
       </main>
 
-      <footer>
+      <footer className="foot">
         <p>© 2026 Pranav Ramanathan · Singapore</p>
         <p><a href="#top">Back to top ↑</a></p>
       </footer>
