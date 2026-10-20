@@ -24,7 +24,10 @@ const projects: Project[] = [
     stack: ['JavaScript', 'No build step', 'Zero runtime dependencies'],
     tone: 'sky',
     media: {src: `${B}img/meco.jpg`, alt: 'The Meco website: Dementia takes away context. Meco rebuilds it.', kind: 'wide'},
-    links: [{label: 'Source', href: 'https://github.com/itzpranav101/meco-67-website-final'}],
+    links: [
+      {label: 'Live site', href: 'https://heymeco.xyz'},
+      {label: 'Source', href: 'https://github.com/itzpranav101/meco-67-website-final'},
+    ],
   },
   {
     id: 'rooted',
@@ -65,11 +68,12 @@ const projects: Project[] = [
 ];
 
 const also = [
-  {name: 'Stavex', text: 'A platform that helps teen founders turn ideas into real projects with weekly tasks and peer validation.', href: 'https://stavex.org', tone: 'lav'},
-  {name: 'Kairo', text: 'A scheduler built around your energy levels, so focus time lands when you actually have focus.', href: 'https://github.com/itzpranav101', tone: 'sky'},
-  {name: 'EcoFlex', text: 'A sustainability project built with web tech.', href: 'https://github.com/itzpranav101/EcoFlex', tone: 'mint'},
-  {name: 'Chorefolio', text: 'Chores, tracked like a portfolio.', href: 'https://github.com/itzpranav101/Chorefolio', tone: 'peach'},
-  {name: 'FinFlow Academy', text: 'Finance lessons for students, built in React and TypeScript.', href: 'https://github.com/itzpranav101/fin-flow-academy-verse', tone: 'butter'},
+  {name: 'Stavex', text: 'A platform that helps teen founders turn ideas into real projects with weekly tasks and peer validation.', links: [{label: 'Site', href: 'https://stavex.org'}, {label: 'Source', href: 'https://github.com/itzpranav101/stavex'}]},
+  {name: 'Kairo', text: 'A scheduler built around your energy levels, so focus time lands when you actually have focus.', links: [{label: 'GitHub', href: 'https://github.com/itzpranav101'}]},
+  {name: 'Chorefolio', text: 'Chores, tracked like a portfolio.', links: [{label: 'Live', href: 'https://chorefolio.vercel.app'}, {label: 'Source', href: 'https://github.com/itzpranav101/Chorefolio'}]},
+  {name: 'EcoFlex', text: 'A sustainability project built with web tech.', links: [{label: 'Source', href: 'https://github.com/itzpranav101/EcoFlex'}]},
+  {name: 'FinFlow Academy', text: 'Finance lessons for students, built in React and TypeScript.', links: [{label: 'Source', href: 'https://github.com/itzpranav101/fin-flow-academy-verse'}]},
+  {name: 'CryptoEducation', text: 'My first Swift app, from January 2025.', links: [{label: 'Source', href: 'https://github.com/itzpranav101/CryptoEducation'}]},
 ];
 
 const principles = [
@@ -231,10 +235,14 @@ export default function App() {
         </section>
 
         <section className="sec">
-          <p className="idx">Also built</p>
+          <p className="idx">More projects</p>
           <ul className="rows">
             {also.map((a) => (
-              <li key={a.name}><a href={a.href} target="_blank" rel="noreferrer"><b>{a.name} <span aria-hidden="true">↗</span></b><span>{a.text}</span></a></li>
+              <li key={a.name}>
+                <b>{a.name}</b>
+                <span>{a.text}</span>
+                <span className="rl">{a.links.map((l) => <a key={l.href} href={l.href} target="_blank" rel="noreferrer">{l.label} <i aria-hidden="true">↗</i></a>)}</span>
+              </li>
             ))}
           </ul>
         </section>
